@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "poeOrderStock",
+    "type": "java.lang.String",
+    "description": "A description for 'poeOrderStock'"
+  },
+  {
+    "name": "newparam",
+    "type": "java.lang.String",
+    "description": "A description for 'newparam'"
+  }
+]}
