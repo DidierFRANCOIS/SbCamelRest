@@ -8,98 +8,89 @@ package com.example.demo.route;
 
 
 import org.apache.camel.builder.RouteBuilder;
+
+import org.apache.camel.model.rest.RestBindingMode;
+//import org.apache.camel.spi.RestConfiguration.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.model.OrderXML;
+import com.example.demo.model.RequestDIBBuild;
+import com.example.demo.service.BuildDIP;
 import com.example.demo.service.HelloService;
 
 
-@Component
+
+// @Component
 public class RteCamelRestDslRestlet01 extends RouteBuilder{
-
-	@Value("${poeOrderStock}")
-	String port; 
-
-	@Value("${hoeOrderStock}")
-	String hostName; 
-
-	@Value ("${componentHttpServer}")
-	String componentHttpServer;
-
-
-	@Autowired 
-	HelloService helloService; 
-	
-	// Creation du nom du fichier. 
-	String FileName = ""; 
-	// Date du fichier. 
-	// header.id 
-	// fileSuffix (-articles.txt) parametre 
-	//?fileName=test${date:now:yyyyMMdd}.txt&fileExist=Append
 
 
 	@Override
 	public void configure() throws Exception {
 
+		
+		
 		restConfiguration()
-		.component("restlet")
+		//.component("servlet")
+		//.bindingMode(RestBindingMode.json)
 		.dataFormatProperty("prettyPrint", "true")
-		.contextPath("/myservices")
-		.componentProperty("minThreads", "1")
-		.componentProperty("maxThreads", "8")
-		.host(hostName)
-		.port(port)
+//		.contextPath("/myservices")
+//		.componentProperty("minThreads", "1")
+//		.componentProperty("maxThreads", "8")
+		.host("localhost")
+		.port("10080") // aucun effet.
 		;
 
-		rest("/orders")
+		rest("/action")
 		.description("User rest service")
-		.produces("text/plain")
-		.get("/order").to("direct:order")
-		.get("/order/{numOrder}").to("direct:orderNum")
-		.get("/order/{numOrder}/comments").to("direct:orderNumComments")
-		.get("/order/{numOrder}/comments/{numComments}").to("direct:orderNumCommentsNum")
+		// .produces("text/plain")
+		// Appel : http://localhost:8080/camel/action/buildDip/entree/sortie
+		//.get("/buildDip/{repInput}/{repOutput}").to("direct:rteBuildDip")
+		
+		
+		.post().type(RequestDIBBuild.class).to("bean:helloService?method=hello") 
+		
+		//.to("direct:rteBuildDip")
 		;
 
 		
 		// pour chaque URI je cree une route . 
-		from("direct:order")
-		.routeId("routeOrder")
-		.log(" Route order ") 
+		from("direct:rteBuildDip")
+		.routeId("rteBuildDip")
+		.log(" Route build DIP ") 
+		.setBody(simple("Parametre retour  ${body} ")) // simple evalue , constant prend la chaine de caractere tel quel 
 		
-		.setBody(constant("World "))
-		.bean(helloService)            // Premiere syntaxe le bean helloService n'a qu'une methode 
-		.to("bean:helloService")       // Deuxieme syntaxe. 
-		
-		// .to("bean:userService?method=getUser(${header.test},${header.id})")
-		
-		// Envoi vers un fichier dont le nom est calculé.
-
-		// Calcul du nombre d'articles.
-		//.to("xslt:com/acme/mytransform.xsl")
+		// .bean(helloService,"hello()")            // Premiere syntaxe le bean helloService n'a qu'une methode 
+		//.to("bean:helloService?method=hello()")       // Deuxieme syntaxe. 
 		;
 
+	
 		
 		
-		//		//{{timer.period}}
-		from("timer:hello?period=2000")
-		.routeId("appelWsRest")
-		.setHeader("id", simple("${random(1,3)}"))
 		
-		.to("rest:get:myservices/orders/order")
-		.log(" Retour appel order : ${body}")
 		
-//		.to("rest:get:myservices/orders/order/${id}")
+		// -------------------
+		// lancement du timer. 
+		// -------------------
+//		from("timer:hello?period=10000")
+//		.routeId("appelWsRest")
+//		.setHeader("id", simple("${random(1,4)}"))
+//		.log(" Identifiant : ${header.id}")
+//		
+//		.to("rest:get:myservices/orders/order")
+//		.log(" Retour appel order : ${body}")
+//		
+//		.toD("rest:get:myservices/orders/order/${header.id}")
 //		.log(" Retour appel 02 : ${body}")
 //		
-//		.to("rest:get:myservices/orders/order/${id}/comments")
+//		.toD("rest:get:myservices/orders/order/${header.id}/comments")
 //		.log(" Retour appel 03 : ${body}")
-//		
-//		.to("rest:get:myservices/orders/order/123/comments/${id}")
+		
+//		.toD("rest:get:myservices/orders/order/123/comments/${header.id}")
 //		.log(" Retour appel 04 : ${body}")
 		
-		
-		;
 
 	}
 
@@ -110,6 +101,15 @@ public class RteCamelRestDslRestlet01 extends RouteBuilder{
 	// .responseMessage().
 	//.endResponseMessage()
 
+	
+	// .to("bean:userService?method=getUser(${header.test},${header.id})")
+	// Envoi vers un fichier dont le nom est calculé.
+
+	// Calcul du nombre d'articles.
+	//.to("xslt:com/acme/mytransform.xsl")
+	
+	
+	
 
 
 }

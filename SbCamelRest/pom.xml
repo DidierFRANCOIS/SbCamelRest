@@ -11,72 +11,97 @@
 	<name>SbCamelRest</name>
 	<description>Demo project for Spring Boot</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<spring.boot-version>${spring-boot-version}</spring.boot-version>
+		<spring.boot.version>1.5.9.RELEASE</spring.boot.version>
+		<camel.version>2.20.1</camel.version>
 		<opentracing-version>0.22.0</opentracing-version>
-		
+
 		<camel-opentracing-starter.version>2.20.1</camel-opentracing-starter.version>
 		<camel-jetty-starter.version>2.20.1</camel-jetty-starter.version>
 		<camel-http-starter.version>2.20.1</camel-http-starter.version>
-		
+
 		<start-class></start-class>
 
 	</properties>
 
 
+	<dependencyManagement>
+
+		<dependencies>
+			<!-- Spring Boot BOM -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Camel BOM -->
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-boot-dependencies</artifactId>
+				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring-boot-starter</artifactId>
-			<version>2.20.1</version>
-		</dependency>
-
-		<!-- <dependency> <groupId>org.apache.camel</groupId> <artifactId>camel-restlet</artifactId> 
-			<version>2.20.1</version> use the same version as your Camel core version 
-			</dependency> -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-restlet-starter</artifactId>
-			<version>${camel-http-starter.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<version>${spring.boot.version}</version><!--$NO-MVN-MAN-VER$ -->
+			<scope>provided</scope>
 		</dependency>
 
-
-
-		<!-- Dependances des tests -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
-			<version>2.20.1</version>
-			<scope>test</scope>
+			<artifactId>camel-spring-boot-starter</artifactId>
+			<version>${camel.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-servlet-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-zipfile</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-jaxb -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jaxb</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<!-- to use json -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jackson-starter</artifactId>
+			<version>${camel.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 
@@ -84,12 +109,20 @@
 
 	<build>
 		<plugins>
-		
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

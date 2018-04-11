@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.example.demo.model.Order;
+import org.springframework.stereotype.Component;
 
+import com.example.demo.OrderService;
+import com.example.demo.model.Order;
+import com.example.demo.model.OrderXML;
+
+@Component("orderService")
 public class DummyOrderService implements OrderService {
 
     // in memory dummy order system
