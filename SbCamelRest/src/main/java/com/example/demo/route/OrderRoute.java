@@ -8,7 +8,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.RequestDIBBuild;
 import com.fasterxml.jackson.core.JsonParseException;
 
-@Component
+//@Component
 public class OrderRoute extends RouteBuilder {
 
 	@Override

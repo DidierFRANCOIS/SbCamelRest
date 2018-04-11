@@ -23,7 +23,7 @@ import com.example.demo.service.HelloService;
 
 
 
-// @Component
+@Component
 public class RteCamelRestDslRestlet01 extends RouteBuilder{
 
 
@@ -33,37 +33,36 @@ public class RteCamelRestDslRestlet01 extends RouteBuilder{
 		
 		
 		restConfiguration()
-		//.component("servlet")
 		//.bindingMode(RestBindingMode.json)
 		.dataFormatProperty("prettyPrint", "true")
-//		.contextPath("/myservices")
-//		.componentProperty("minThreads", "1")
-//		.componentProperty("maxThreads", "8")
 		.host("localhost")
-		.port("10080") // aucun effet.
 		;
 
-		rest("/action")
+		rest("/search")
 		.description("User rest service")
-		// .produces("text/plain")
-		// Appel : http://localhost:8080/camel/action/buildDip/entree/sortie
+		.produces("text/plain")
 		//.get("/buildDip/{repInput}/{repOutput}").to("direct:rteBuildDip")
+		.get("/getBooking/{codeSite}").to("direct:getBooking")
+		.get("/action/test/{repOutput}").to("direct:test")
 		
-		
-		.post().type(RequestDIBBuild.class).to("bean:helloService?method=hello") 
+		// .post().type(RequestDIBBuild.class).to("bean:helloService?method=hello") 
 		
 		//.to("direct:rteBuildDip")
 		;
+		
+		
+		from("direct:test")
+		.setBody(simple("test parametre :   ${header.repOutput} "));
 
+		from("direct:getBooking")
+		.setBody(simple("Disponibilite pour le site :   ${header.codeSite} "));
+		
 		
 		// pour chaque URI je cree une route . 
 		from("direct:rteBuildDip")
 		.routeId("rteBuildDip")
 		.log(" Route build DIP ") 
-		.setBody(simple("Parametre retour  ${body} ")) // simple evalue , constant prend la chaine de caractere tel quel 
-		
-		// .bean(helloService,"hello()")            // Premiere syntaxe le bean helloService n'a qu'une methode 
-		//.to("bean:helloService?method=hello()")       // Deuxieme syntaxe. 
+		.setBody(simple("Parametre retour  ${header} ")) // simple evalue , constant prend la chaine de caractere tel quel 
 		;
 
 	
